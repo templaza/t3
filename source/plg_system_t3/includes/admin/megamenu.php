@@ -14,7 +14,7 @@
 
 class T3AdminMegamenu {
 	public static function display () {
-		t3import('menu/megamenu');
+		T3::import('menu/megamenu');
 		$input = JFactory::getApplication()->input;
 		$menutype = $input->get ('t3menu', 'mainmenu');
 		$tplparams = $input->get('tplparams', '', 'raw');
@@ -41,9 +41,12 @@ class T3AdminMegamenu {
 		$menutype = $input->get ('menutype', 'mainmenu');
 		$file = T3_TEMPLATE_PATH.'/etc/megamenu.ini';
 		$currentconfig = json_decode(@file_get_contents($file), true);
-		if (!$currentconfig) $currentconfig = array();
+		if (!$currentconfig){
+			$currentconfig = array();
+		} 
 		$currentconfig[$menutype] = json_decode($mmconfig, true);
-		JFile::write ($file, json_encode ($currentconfig));
+		$currentconfig = json_encode ($currentconfig);
+		JFile::write ($file, $currentconfig);
 	}
 }
 	

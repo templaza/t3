@@ -149,8 +149,7 @@
 }
 
 .t3-megamenu .nav > li > a,
-.t3-megamenu .nav > li > span
- {
+.t3-megamenu .nav > li > span {
   border: 1px solid #dddddd;
   padding: 8px 20px;
   background: #f2f2f2;
@@ -206,8 +205,8 @@
   margin-bottom: 0;
 }
 
-.t3-megamenu .mega-nav li a,
-.t3-megamenu .mega-nav li span {
+.t3-megamenu .mega-nav li > a,
+.t3-megamenu .mega-nav li > span {
   padding: 5px 20px 5px 10px;
   border: 1px dotted #dddddd;
   border-radius: 3px;
@@ -287,6 +286,52 @@
   zoom: 1;
 }
 
+/* Reset List Style in Module */
+.t3-megamenu .t3-module ul,
+.t3-megamenu .t3-module .nav,
+.t3-megamenu .dropdown-menu .nav {
+  margin: 0 0 0 15px;
+}
+.t3-megamenu .t3-module ul li,
+.t3-megamenu .t3-module .nav li,
+.t3-megamenu .dropdown-menu .nav li {
+  list-style: disc;
+  display: list-item;
+  float: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.t3-megamenu .t3-module ul li a,
+.t3-megamenu .t3-module .nav li a,
+.t3-megamenu .dropdown-menu .t3-module li a {
+  display: inline;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  font-size: 100%;
+  background: none;
+  font: inherit;
+  white-space: normal;
+}
+.t3-megamenu .t3-module ul li a:hover,
+.t3-megamenu .t3-module .nav li a:hover,
+.t3-megamenu .dropdown-menu .t3-module li a:hover,
+.t3-megamenu .t3-module ul li a:active,
+.t3-megamenu .t3-module .nav li a:active,
+.t3-megamenu .dropdown-menu .t3-module li a:active,
+.t3-megamenu .t3-module ul li a:focus,
+.t3-megamenu .t3-module .nav li a:focus,
+.t3-megamenu .dropdown-menu .t3-module li a:focus,
+.t3-megamenu .t3-module ul li a:visited,
+.t3-megamenu .t3-module .nav li a:visited,
+.t3-megamenu .dropdown-menu .t3-module li a:visited {
+  background: none;
+  color: inherit;
+  font: inherit;
+}
+
+
 .t3-megamenu [class*="span"].hover .t3-module:after,
 .t3-megamenu [class*="span"].selected .t3-module:after {
   border-style: solid;
@@ -351,6 +396,12 @@
   text-shadow: 0 1px 1px white !important;
 }
 
+/* The caption ---*/
+.mega-caption {
+  color: #999;
+  font-size: 11px;
+  margin-top: 2px;
+}
 
 
 /* Fix for Joomla! Default Admin Template

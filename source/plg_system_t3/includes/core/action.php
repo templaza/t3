@@ -19,7 +19,7 @@ defined('_JEXEC') or die();
  *
  * @package T3
  */
-class T3Action extends JObject
+class T3Action
 {
 	public static function run ($action) {
 		if (method_exists('T3Action', $action)) {
@@ -45,7 +45,7 @@ class T3Action extends JObject
 	public static function lessc () {
 		$path = JFactory::getApplication()->input->getString ('s');
 
-		t3import ('core/less');
+		T3::import ('core/less');
 		$t3less = new T3Less;
 		$css = $t3less->getCss($path);
 
@@ -55,7 +55,7 @@ class T3Action extends JObject
 	}
 
 	public static function lesscall(){
-		t3import ('core/less');
+		T3::import ('core/less');
 		
 		$result = array();
 		try{
@@ -93,7 +93,7 @@ class T3Action extends JObject
 			)));
 		}
 
-		t3import('admin/theme');
+		T3::import('admin/theme');
 		
 		if(method_exists('T3AdminTheme', $action)){
 			T3AdminTheme::$action(T3_TEMPLATE_PATH);	
@@ -102,55 +102,6 @@ class T3Action extends JObject
 				'error' => JText::_('T3_MSG_UNKNOW_ACTION')
 			)));
 		}
-	}
-
-	public static function positions(){
-		self::cloneParam('t3layout');
-
-		$japp = JFactory::getApplication();
-		if(!$japp->isAdmin()){
-			$tpl = $japp->getTemplate(true);
-		} else {
-
-			$tplid = JFactory::getApplication()->input->getCmd('view') == 'style' ? JFactory::getApplication()->input->getCmd('id', 0) : false;
-			if(!$tplid){
-				die(json_encode(array(
-					'error' => JText::_('T3_MSG_UNKNOW_ACTION')
-					)));
-			}
-
-			$cache = JFactory::getCache('com_templates', '');
-			if (!$templates = $cache->get('t3tpl')) {
-				// Load styles
-				$db = JFactory::getDbo();
-				$query = $db->getQuery(true);
-				$query->select('id, home, template, s.params');
-				$query->from('#__template_styles as s');
-				$query->where('s.client_id = 0');
-				$query->where('e.enabled = 1');
-				$query->leftJoin('#__extensions as e ON e.element=s.template AND e.type='.$db->quote('template').' AND e.client_id=s.client_id');
-
-				$db->setQuery($query);
-				$templates = $db->loadObjectList('id');
-				foreach($templates as &$template) {
-					$registry = new JRegistry;
-					$registry->loadString($template->params);
-					$template->params = $registry;
-				}
-				$cache->store($templates, 't3tpl');
-			}
-
-			if (isset($templates[$tplid])) {
-				$tpl = $templates[$tplid];
-			}
-			else {
-				$tpl = $templates[0];
-			}
-		}
-
-		$t3app = T3::getSite($tpl);
-		$layout = $t3app->getLayout();
-		$t3app->loadLayout($layout);
 	}
 
 	public static function layout(){
@@ -178,7 +129,7 @@ class T3Action extends JObject
 			}
 		}
 
-		t3import('admin/layout');
+		T3::import('admin/layout');
 		
 		if(method_exists('T3AdminLayout', $action)){
 			T3AdminLayout::$action(T3_TEMPLATE_PATH);	
@@ -214,7 +165,7 @@ class T3Action extends JObject
 			}
 		}
 
-		t3import('admin/megamenu');
+		T3::import('admin/megamenu');
 		
 		if(method_exists('T3AdminMegamenu', $action)){
 			T3AdminMegamenu::$action();	
@@ -267,16 +218,4 @@ class T3Action extends JObject
 			$input->set($param, $input->getCmd($from));
 		}
 	}
-
-	public static function unittest () {
-		$app = JFactory::getApplication();
-		$tpl = $app->getTemplate(true);
-		$t3app = T3::getApp($tpl);
-		$layout = JFactory::getApplication()->input->getCmd('layout', 'default');
-		ob_start();
-		$t3app->loadLayout ($layout);
-		ob_clean();
-		echo "Positions for layout [$layout]: <br />";
-		var_dump ($t3app->getPositions());
-	}	
 }

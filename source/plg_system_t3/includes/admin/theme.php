@@ -12,6 +12,9 @@
  *------------------------------------------------------------------------------
  */
 
+jimport('joomla.filesystem.file');
+jimport('joomla.filesystem.folder');
+
 /**
  *
  * Admin helper module class
@@ -50,7 +53,7 @@ class T3AdminTheme
 		$file = $path . '/less/themes/' . $theme . '/variables-custom.less';
 
 		if(!class_exists('JRegistryFormatLESS')){
-			t3import('format/less');
+			T3::import('format/less');
 		}
 		$variables = new JRegistry();
 		$variables->loadObject($_POST);
@@ -58,7 +61,6 @@ class T3AdminTheme
 		$data = $variables->toString('LESS');
 		$type = 'new';
 		if (JFile::exists($file)) {
-			@chmod($file, 0777);
 			$type = 'overwrite';
 		} else {
 
@@ -85,7 +87,7 @@ class T3AdminTheme
 		}
 
 		//LessHelper::compileForTemplate(T3_TEMPLATE_PATH, $theme);
-		t3import ('core/less');
+		T3::import ('core/less');
 		T3Less::compileAll($theme);
 		return self::response($result);
 	}
@@ -125,7 +127,7 @@ class T3AdminTheme
 		}
 		
 		//LessHelper::compileForTemplate(T3_TEMPLATE_PATH , $theme);
-		t3import ('core/less');
+		T3::import ('core/less');
 		T3Less::compileAll($theme);
 		return self::response($result);
 	}
@@ -174,12 +176,12 @@ class T3AdminTheme
 	{
 		$app = JFactory::getApplication();
 		$isadmin = $app->isAdmin();
-		$url = $isadmin ? JUri::root(true).'/' : JUri::current();
+		$url = $isadmin ? JUri::root(true).'/index.php' : JUri::current();
 		$url .= (preg_match('/\?/', $url) ? '&' : '?').'themer=1';
 		// show thememagic form
 
 		//todo: Need to optimize here
-		$tplparams = JApplication::getInstance('site')->getTemplate(true)->params;
+		$tplparams = JFactory::getApplication('site')->getTemplate(true)->params;
 
 		$assetspath = T3_TEMPLATE_PATH;
 		$themepath = $assetspath . '/less/themes';
@@ -248,6 +250,7 @@ class T3AdminTheme
 		$langs = array (
 			'addTheme' => JText::_('T3_TM_ASK_ADD_THEME'),
 			'delTheme' => JText::_('T3_TM_ASK_DEL_THEME'),
+			'overwriteTheme' => JText::_('T3_TM_ASK_OVERWRITE_THEME'),
 			'correctName' => JText::_('T3_TM_ASK_CORRECT_NAME'),
 			'themeExist' => JText::_('T3_TM_EXISTED'),
 			'saveChange' => JText::_('T3_TM_ASK_SAVE_CHANGED'),
@@ -256,7 +259,8 @@ class T3AdminTheme
 			'lblCancel' => JText::_('JCANCEL'),
 			'lblOk'	=> JText::_('T3_TM_LABEL_OK'),
 			'lblNo' => JText::_('JNO'),
-			'lblYes' => JText::_('JYES')
+			'lblYes' => JText::_('JYES'),
+			'lblDefault' => JText::_('JDEFAULT')
 		);
 
 		//Keepalive
@@ -279,11 +283,24 @@ class T3AdminTheme
 			$backurl->delVar('themer');
 		}
 
-		$form = new JForm('thememagic.themer', array('control' => 't3form'));
-		$form->load(JFile::read(T3_PATH . DIRECTORY_SEPARATOR . 'params' . DIRECTORY_SEPARATOR . 'thememagic.xml'));
-		$form->loadFile(T3_TEMPLATE_PATH . DIRECTORY_SEPARATOR . 'templateDetails.xml', false, '//config');
+		T3::import('depend/t3form');
+
+		$form = new T3Form('thememagic.themer', array('control' => 't3form'));
+		$form->load(JFile::read(JFile::exists(T3_TEMPLATE_PATH . '/thememagic.xml') ? T3_TEMPLATE_PATH . '/thememagic.xml' : T3_PATH . '/params/thememagic.xml'));
+		$form->loadFile(T3_TEMPLATE_PATH . '/templateDetails.xml', true, '//config');
+
+		$tplform = new T3Form('thememagic.overwrite', array('control' => 't3form'));
+		$tplform->loadFile(T3_TEMPLATE_PATH . '/templateDetails.xml', true, '//config');
 
 		$fieldSets = $form->getFieldsets('thememagic');
+		$tplFieldSets = $tplform->getFieldsets('thememagic');
+
+		$disabledFieldSets = array();
+		foreach ($tplFieldSets as $name => $fieldSet){
+			if(isset($fieldSet->disabled)){
+				$disabledFieldSets[] = $name;
+			}
+		}
 
 		include T3_ADMIN_PATH.'/admin/thememagic/thememagic.tpl.php';
 		
@@ -292,10 +309,18 @@ class T3AdminTheme
 
 	public static function addAssets(){
 		$japp = JFactory::getApplication();
+		$user = JFactory::getUser();
+
+		//do nothing when site is offline and user has not login (the offline page is only show login form)
+		if ($japp->getCfg('offline') && !$user->authorise('core.login.offline')) {
+			return;
+		}
+
 		$jdoc = JFactory::getDocument();
 		$params = $japp->getTemplate(true)->params;
+		
 		if(defined('T3_THEMER') && $params->get('themermode', 1)){
-			
+
 			$jdoc->addStyleSheet(T3_URL.'/css/thememagic.css');
 			$jdoc->addScript(T3_URL.'/js/thememagic.js');
 			

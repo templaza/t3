@@ -14,29 +14,28 @@
 
 
 /**
- * Import T3 Library
- *
- * @param string $package    Object path that seperate by backslash (/)
- *
- * @return void
- */
-function t3import($package)
-{
-	$path = T3_ADMIN_PATH . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . strtolower($package) . '.php';
-	if (file_exists($path)) {
-		include_once $path;
-	} else {
-		trigger_error('t3import not found object: ' . $package, E_USER_ERROR);
-	}
-}
-
-/**
  * T3 Class
  * Singleton class for T3
  */
 class T3 {
 	
 	protected static $t3app = null;
+
+	/**
+	 * Import T3 Library
+	 *
+	 * @param string $package    Object path that seperate by backslash (/)
+	 *
+	 * @return void
+	 */
+	public static function import($package){
+		$path = T3_ADMIN_PATH . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . strtolower($package) . '.php';
+		if (file_exists($path)) {
+			include_once $path;
+		} else {
+			trigger_error('T3::import not found object: ' . $package, E_USER_ERROR);
+		}
+	}
 
 	public static function getApp($tpl = null){
 		if(empty(self::$t3app)){	
@@ -50,8 +49,26 @@ class T3 {
 	/**
 	 * Initialize T3
 	 */
-	public static function init ($template) {
-		define ('T3_TEMPLATE', $template);
+	public static function init ($xml) {
+		$app = JFactory::getApplication();
+		$input = $app->input;
+		$templateobj = $app->getTemplate(true);
+		$coretheme = isset($xml->t3) && isset($xml->t3->base) ? trim($xml->t3->base) : 'base';
+		// check coretheme in media/t3/themes folder
+		// if not exists, use default base theme in T3
+		if ($coretheme && is_dir(JPATH_ROOT.'/media/t3/themes/'.$coretheme)){
+			define ('T3', $coretheme);
+			define ('T3_URL', JURI::base(true).'/media/t3/themes/' . T3);
+			define ('T3_PATH', JPATH_ROOT . '/media/t3/themes/' . T3);
+			define ('T3_REL', 'media/t3/themes/' . T3);
+		} else {
+			define ('T3', 'base');
+			define ('T3_URL', T3_ADMIN_URL.'/'.T3);
+			define ('T3_PATH', T3_ADMIN_PATH . '/' . T3);
+			define ('T3_REL', T3_ADMIN_REL.'/'.T3);						
+		}
+
+		define ('T3_TEMPLATE', $xml->tplname);
 		define ('T3_TEMPLATE_URL', JURI::root(true).'/templates/'.T3_TEMPLATE);
 		define ('T3_TEMPLATE_PATH', JPATH_ROOT . '/templates/' . T3_TEMPLATE);
 		define ('T3_TEMPLATE_REL', 'templates/' . T3_TEMPLATE);
@@ -59,10 +76,6 @@ class T3 {
 		//load T3 Framework language
 		JFactory::getLanguage()->load(T3_PLUGIN, JPATH_ADMINISTRATOR);
 		
-		$app = JFactory::getApplication();
-		$input = $app->input;
-		$templateobj = $app->getTemplate(true);
-
 		if ($input->getCmd('themer', 0)){
 			define ('T3_THEMER', 1);
 		}
@@ -78,7 +91,7 @@ class T3 {
 		}
 
 		// load core library
-		t3import ('core/path');
+		T3::import ('core/path');
 		
 		$app = JFactory::getApplication();
 		if (!$app->isAdmin()) {
@@ -86,19 +99,19 @@ class T3 {
 			if($jversion->isCompatible('3.0')){
 				// override core joomla class
 				// JViewLegacy
-				if (!class_exists('JViewLegacy', false)) t3import ('joomla30/viewlegacy');
+				if (!class_exists('JViewLegacy', false)) T3::import ('joomla30/viewlegacy');
 				// JModuleHelper
-				if (!class_exists('JModuleHelper', false)) t3import ('joomla30/modulehelper');
+				if (!class_exists('JModuleHelper', false)) T3::import ('joomla30/modulehelper');
 				// JPagination
-				if (!class_exists('JPagination', false)) t3import ('joomla30/pagination');
+				if (!class_exists('JPagination', false)) T3::import ('joomla30/pagination');
 			} else {
 				// override core joomla class
 				// JViewLegacy
-				if (!class_exists('JView', false)) t3import ('joomla25/view');
+				if (!class_exists('JView', false)) T3::import ('joomla25/view');
 				// JModuleHelper
-				if (!class_exists('JModuleHelper', false)) t3import ('joomla25/modulehelper');
+				if (!class_exists('JModuleHelper', false)) T3::import ('joomla25/modulehelper');
 				// JPagination
-				if (!class_exists('JPagination', false)) t3import ('joomla25/pagination');
+				if (!class_exists('JPagination', false)) T3::import ('joomla25/pagination');
 			}
 		} else {
 		}
@@ -108,19 +121,32 @@ class T3 {
 			$input->set('t3action', 'theme');
 			$input->set('t3task', 'thememagic');
 		}
-
 	}
 
 	public static function checkAction () {
 		// excute action by T3
 		if ($action = JFactory::getApplication()->input->getCmd ('t3action')) {
-			t3import ('core/action');
+			T3::import ('core/action');
 			T3Action::run ($action);
 		}
 	}
 
+	public static function checkAjax () {
+		// excute action by T3
+		$input = JFactory::getApplication()->input;
+
+		if ($input->getCmd ('t3ajax')) {
+			T3::import('core/ajax');
+			T3::import('renderer/t3ajax');
+
+			//T3Ajax::processAjaxRule();
+
+			JFactory::getApplication()->getTemplate(true)->params->set('mainlayout', 'ajax.' . $input->getCmd('f', 'html'));	
+		}
+	}
+
 	public static function getAdmin(){
-		t3import ('core/admin');
+		T3::import ('core/admin');
 		return new T3Admin();
 	}
 
@@ -131,7 +157,7 @@ class T3 {
 		}
 
 		$type = 'Template'. JFactory::getApplication()->input->getCmd ('t3tp', '');
-		t3import ('core/'.$type);
+		T3::import ('core/'.$type);
 
 		// create global t3 template object 
 		$class = 'T3'.$type;
@@ -149,8 +175,7 @@ class T3 {
 		}
 	}
 
-	public static function detect()
-	{
+	public static function detect(){
 		static $t3;
 
 		if (!isset($t3)) {
@@ -214,17 +239,38 @@ class T3 {
 					// parse xml
 				$filePath = JPath::clean(JPATH_ROOT.'/templates/'.$tplname.'/templateDetails.xml');
 				if (is_file ($filePath)) {
-					$xml = JInstaller::parseXMLInstallFile($filePath);
-					if (strtolower($xml['group']) == 't3') {
-						$t3 = $tplname;
+					$xml = $xml = simplexml_load_file($filePath);
+					// check t3 or group=t3 (compatible with previous definition)
+					if (isset($xml->t3) || (isset($xml->group) && strtolower($xml->group) == 't3')) {
+						$xml->tplname = $tplname;
+						$t3 = $xml;
 					}
 				}
 			}
-
 		}
 		return $t3;
 	}
 
-}
+	public static function getDefaultTemplate(){
+		static $defaultTemplate;
 
-?>
+		if (!isset($defaultTemplate)) {
+
+			$db = JFactory::getDbo();
+			$query = $db->getQuery(true);
+			$query->select('id, template, s.params');
+			$query->from('#__template_styles as s');
+			$query->where('s.client_id = 0');
+			$query->where('s.home = 1');
+			$query->where('e.enabled = 1');
+			$query->leftJoin('#__extensions as e ON e.element=s.template AND e.type='.$db->quote('template').' AND e.client_id=s.client_id');
+
+			$db->setQuery($query);
+			$result = $db->loadObject();
+
+			$defaultTemplate = !empty($result) ? $result->template : false;
+		}
+
+		return $defaultTemplate;
+	}
+}

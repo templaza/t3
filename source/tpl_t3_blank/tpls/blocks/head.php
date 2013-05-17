@@ -9,7 +9,7 @@ defined('_JEXEC') or die;
 ?>
 
 <!-- META FOR IOS & HANDHELD -->
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0<?php echo $this->getParam('responsive', 1) ? ', maximum-scale=1.0, user-scalable=no' : '' ?>"/>
 <meta name="HandheldFriendly" content="true" />
 <meta name="apple-mobile-web-app-capable" content="YES" />
 <!-- //META FOR IOS & HANDHELD -->
@@ -32,7 +32,7 @@ if(is_file(T3_TEMPLATE_PATH . '/css/custom.css')) {
 
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
-<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
 
 <!-- For IE6-8 support of media query -->

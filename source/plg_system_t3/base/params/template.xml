@@ -48,15 +48,19 @@
 				label="T3_GENERAL_ASSETS_FOLDER_LABEL"
 				description="T3_GENERAL_ASSETS_FOLDER_DESC" />
 
+			<field name="t3-rmvlogo" type="radio" class="btn-group" default="1"
+				global="1"
+				label="T3_GENERAL_REMOVE_T3LOGO_LABEL" 
+				description="T3_GENERAL_REMOVE_T3LOGO_DESC" >
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+
 		</fieldset>
 
 		<fieldset name="theme_params" label="T3_THEME_LABEL" description="T3_THEME_DESC">
 
 			<field name="theme_params_default" type="t3depend" function="@group">
-				<option for="logotype" value="text">
-					sitename,
-					slogan
-				</option>
 				<option for="logotype" value="image">
 					logoimage
 				</option>
@@ -114,7 +118,11 @@
 		<fieldset name="navigation_params" label="T3_NAVIGATION_LABEL" description="T3_NAVIGATION_DESC">
 			<field name="navigation_group_default" type="t3depend" function="@group">
 				<option for="navigation_type" value="megamenu">
-					mm_type
+					mm_type,navigation_animation,navigation_animation_duration
+				</option>
+				<option 
+					for="navigation_trigger" value="hover">
+					navigation_animation,navigation_animation_duration
 				</option>
 			</field>
 			<field name="navigation_ajax_default" type="t3depend" function="@ajax">
@@ -133,6 +141,14 @@
 				<option value="click">Mouse Click</option>
 			</field>
 
+			<field name="navigation_collapse_offcanvas" type="radio" class="btn-group" default="1"
+				global="1"
+				label="T3_NAVIGATION_COLLAPSE_OFFCANVAS"
+				description="T3_NAVIGATION_COLLAPSE_OFFCANVAS_DESC">
+				<option value="0">JNO</option>
+				<option value="1">JYES</option>
+			</field>
+
 			<field name="navigation_collapse_showsub" type="radio" class="btn-group" default="1"
 				global="1"
 				label="T3_NAVIGATION_COLLAPSE_LABEL"
@@ -147,6 +163,21 @@
 				<option value="joomla">Joomla Module</option>
 				<option value="megamenu">Megamenu</option>
 			</field>
+
+			<field name="navigation_animation" type="list" default=""
+				global="1"
+				label="T3_NAVIGATION_ANIMATION_LABEL"
+				description="T3_NAVIGATION_ANIMATION_DESC">
+				<option value="">None</option>
+				<option value="fading">Fading</option>
+				<option value="slide">Slide</option>
+				<option value="zoom">Zoom</option>
+				<option value="elastic">Elastic</option>
+			</field>
+			<field name="navigation_animation_duration" type="text" default="400"
+				global="1"
+				label="T3_NAVIGATION_ANIMATION_DURATION_LABEL"
+				description="T3_NAVIGATION_ANIMATION_DURATION_DESC" />
 
 			<field name="mm_type" type="menu" default="mainmenu"
 				label="T3_NAVIGATION_MM_TYPE_LABEL"

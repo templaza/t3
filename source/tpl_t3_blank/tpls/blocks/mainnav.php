@@ -9,14 +9,12 @@ defined('_JEXEC') or die;
 ?>
 
 <!-- MAIN NAVIGATION -->
-<nav id="t3-mainnav" class="wrap t3-mainnav">
+<nav id="t3-mainnav" class="wrap t3-mainnav navbar-collapse-fixed-top">
   <div class="container navbar">
     <div class="navbar-inner">
-
+    
       <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
+        <i class="icon-reorder"></i>
       </button>
 
   	  <div class="nav-collapse collapse<?php echo $this->getParam('navigation_collapse_showsub', 1) ? ' always-show' : '' ?>">

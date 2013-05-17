@@ -19,7 +19,6 @@
   #gradient > .vertical(@navbarBackgroundHighlight, @navbarBackground);
   border-top: 1px solid @navbarBackground;
   border-bottom: 1px solid darken(@navbarBackground, 10%);
-  height: @navbarHeight;
 
   .navbar {
     color: @navbarText;
@@ -52,7 +51,7 @@
   .navbar .nav > li > a {
     border-top: 0;
     border-right: 1px solid darken(@navbarBackground, 5%);
-    padding: ((@navbarHeight - @baseLineHeight) / 2) @baseLineHeight;
+    padding: ((@navbarHeight - @T3globalPadding) / 2) @T3globalPadding;
     text-shadow: none;
   }
 
@@ -72,7 +71,7 @@
     color: @navbarLinkColorActive;
     text-shadow: none;
     #gradient > .vertical(lighten(@navbarLinkBackgroundActive, 10%), @navbarLinkBackgroundActive);
-    .box-shadow(none );
+    .box-shadow (none);
     outline: none;
   }
 
@@ -83,22 +82,17 @@
   // These definitions need to come after '.navbar .btn'
   .navbar .btn-navbar {
     float: left;
-    padding: 7px 10px;
-    margin: 7px 20px 0;
+    padding: 5px 10px;
+    margin: 5px 20px 0;
     .buttonBackground(darken(@navbarBackgroundHighlight, 5%), darken(@navbarBackground, 5%));
     .box-shadow(~"inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(255,255,255,.075)");
-  }
-
-  .navbar .btn-navbar .icon-bar {
-    width: 18px;
-    height: 2px;
-    background-color: #f5f5f5;
-    .border-radius(1px);
-    .box-shadow(0 1px 0 rgba(0,0,0,.25));
-  }
-
-  .btn-navbar .icon-bar + .icon-bar {
-    margin-top: 3px;
+    
+    // The icon
+    [class^="icon-"],
+    [class^=" icon-"] {
+      color: @navbarText;
+      text-shadow: none;
+    }
   }
 
 
@@ -177,7 +171,7 @@
   // ----------
   .nav li.dropdown.open > .dropdown-toggle {
     background-color: @dropdownLinkBackgroundHover;
-    color: @dropdownLinkColorActive;
+    color: @dropdownLinkColorHover;
   }
 
   // Active Open
@@ -290,3 +284,4 @@
 .t3-mainnav {
   .T3Navbar();
 }
+

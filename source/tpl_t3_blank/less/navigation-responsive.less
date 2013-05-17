@@ -13,7 +13,7 @@
 
 
 // ---------------------------------------------------------
-// MOBILE
+// RESPONSIVE NAVIFATION FOR MOBILE
 // ---------------------------------------------------------
 @media (max-width: @navbarCollapseWidth) {
 
@@ -44,7 +44,11 @@
 
     // Toggle Button
     .navbar .btn-navbar {
-      margin-bottom: (@baseLineHeight / 2);
+      margin-bottom: (@T3globalMargin / 2);
+    }
+
+    .navbar .btn-navbar:hover {
+      cursor: pointer;
     }
 
 
@@ -53,7 +57,7 @@
 
     // The nav
     .nav-collapse {
-      margin-top: (@baseLineHeight / 2);
+      margin-top: (@T3globalMargin / 2);
       background: #fff;
       //#gradient > .vertical(@navbarBackground, @navbarBackgroundHighlight);
     }
@@ -75,7 +79,7 @@
     .nav-collapse .nav > li > a,
     .nav-collapse .dropdown-menu a {
       border-bottom: 1px solid @hrBorder;
-      padding: (@baseLineHeight / 2) @baseLineHeight;
+      padding: (@T3globalPadding / 2) @T3globalPadding;
       font-weight: bold;
       //color: @navbarLinkColor;
       text-shadow: none;
@@ -100,7 +104,7 @@
       border-top: 1px solid darken(@navbarBackground, 5%);
       border-bottom: 0;
       font-weight: normal;
-      padding: (@baseLineHeight / 2) @baseLineHeight;
+      padding: (@T3globalPadding / 2) @T3globalPadding;
     }
 
 
@@ -121,6 +125,14 @@
       border: none;
       .border-radius(0);
       .box-shadow(none);
+    }
+    
+    
+    // Full width when fixed
+    // ---------------------
+    &.navbar-collapse-fixed-top {
+      margin-left: 0;
+      margin-right: 0;
     }
     // End
   }
@@ -198,10 +210,12 @@
   }
 
 
-  
-  //  MISC
+
+  // ----------------------------------------------------
+  // MISC
   // ----------------------------------------------------
   .t3-mainnav .navbar .nav > li > .dropdown-menu {
+    // Hiding Menu and Divider in nav-collapse
     &:before, &:after, .divider {
       display: none;
     }
@@ -210,5 +224,6 @@
   .t3-mainnav .customization {
     display: none;
   }
+
   // End Responsive
 }
