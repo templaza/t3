@@ -18,8 +18,8 @@
 // ---------------------------------------------------------
 
 .t3-header {
-  padding-top: @baseLineHeight;
-  padding-bottom: @baseLineHeight;
+  padding-top: @T3globalPadding;
+  padding-bottom: @T3globalPadding;
 }
 
 
@@ -91,31 +91,30 @@
 // ------------------------------------------------------
 .head-search {
   float: right;
-  margin-top: @baseLineHeight;
-}
+  margin-top: @T3globalMargin;
 
-.head-search form {
-  margin: 0;
-  float: right;
-}
-
-.head-search label {
-  display: none;
-}
-
-.head-search .search {
-}
-
-.head-search .input {
-  background: url(../images/ico/search-invert.png) no-repeat 8px center;
-  width: 120px;
-  padding-left: 26px;
-}
-
-/* focus state */
-.head-search .input:focus {
-  color: @grayDark;
-  width: 180px;
+  form {
+    margin: 0;
+    float: right;
+  }
+  
+  label {
+    display: none;
+  }
+  
+  .search {
+  }
+  
+  .input {
+    background: url("@{T3ImagePath}/ico/search-invert.png") no-repeat 8px center;
+    width: 120px;
+    padding-left: 26px;
+    // focus state
+    &:focus {
+      color: @grayDark;
+      width: 180px;
+    }
+  }
 }
 
 
@@ -125,8 +124,8 @@
 // ---------------------------------------------------------
 
 .t3-sl {
-  padding-bottom: @baseLineHeight * 3;
-  padding-top: @baseLineHeight * 3;
+  padding-bottom: @T3globalPadding * 3;
+  padding-top: @T3globalPadding * 3;
   // /.clearfix();
 }
 
@@ -156,8 +155,8 @@
 // MAIN BODY
 // ---------------------------------------------------------
 .t3-mainbody {
-  padding-bottom: @baseLineHeight*2;
-  padding-top: @baseLineHeight*2;
+  padding-bottom: @T3globalPadding * 2;
+  padding-top: @T3globalPadding * 2;
 }
 
 // Content
@@ -181,7 +180,6 @@
 // ---------------------------------------------------------
 // FOOTER
 // ---------------------------------------------------------
-
 .t3-footer {
   background: @grayDarker;
   color: @gray;
@@ -194,31 +192,32 @@
   // links
   a {
     color: @T3FooterModuleColor;
-  }
-  a:hover, a:active, a:focus {
-    color: lighten(@gray,50%);
+    // Link States
+    &:hover, &:active, &:focus {
+      color: lighten(@gray,50%);
+    }
   }
 }
 
 // Foot Nav
 // --------
 .t3-footnav {
-  padding: (@baseLineHeight * 3) 0 (@baseLineHeight * 2);
+  padding: (@T3globalPadding * 3) 0 (@T3globalPadding * 2);
   .clearfix();
-}
 
-.t3-footnav ul {
-  list-style: none;
-  margin-left: 0;
-}
-
-.t3-footnav li {
-  line-height: 24px;
-}
-
-.t3-footnav .module-title {
-  font-size: @baseFontSize + 4px;
-  color: @T3FooterModuleTitleColor;
+  ul {
+    list-style: none;
+    margin-left: 0;
+  }
+  
+  li {
+    line-height: 24px;
+  }
+  
+  .module-title {
+    font-size: @baseFontSize + 4px;
+    color: @T3FooterModuleTitleColor;
+  }
 }
 
 // Copyright
@@ -226,7 +225,7 @@
 .t3-copyright {
   border-top: 1px solid lighten(@grayDarker,5%);
   font-size: @T3smallerFontSize;
-  padding: (@baseLineHeight * 2) 0 (@baseLineHeight * 4);
+  padding: (@T3globalPadding * 2) 0 (@T3globalPadding * 4);
   .clearfix();
 }
 

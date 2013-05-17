@@ -11,6 +11,20 @@
  *------------------------------------------------------------------------------
  */
 
+// VARIABLES & MIXINS
+// ------------------
+
+// Prevent Bootstrap Upgrading errors
+@import "../bootstrap/less/variables.less";
+
+// Bootstrap mixins
+@import "../bootstrap/less/mixins.less";
+
+// T3 Base variables
+@import "variables.less";
+
+
+
 //
 // MOBILE
 // ---------------------------------------------------------
@@ -24,7 +38,7 @@
     // Global Menu Inner padding
     // -------------------------
     .mega-inner {
-      padding: (@baseLineHeight / 2) @baseLineHeight;
+      padding: (@T3globalPadding / 2) @T3globalPadding;
     }
 
     // Inner Padding for 1 column
@@ -49,7 +63,7 @@
     }
 
     .row-fluid + .row-fluid  {
-      padding-top: @baseLineHeight / 2;
+      padding-top: @T3globalPadding / 2;
       border-top: 1px solid @hrBorder;
     }
 
@@ -58,11 +72,19 @@
 
     // Hidden when collapse
     .hidden-collapse,
+    .always-show  .caret,
     .sub-hidden-collapse > .nav-child,
-    .sub-hidden-collapse .caret {
+    .sub-hidden-collapse .caret,
+    .sub-hidden-collapse > a:after,
+    .always-show .dropdown-submenu > a:after {
       display: none !important;
     }
+    
+    // Hide the captions too
+    .mega-caption {
+      display: none !important;
+    }
+    
   }
-
 
 }

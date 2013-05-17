@@ -14,10 +14,14 @@
 
 // No direct access
 defined('_JEXEC') or die();
-t3import('lessphp/lessc.inc');
-t3import('core/path');
+
 jimport('joomla.filesystem.file');
 jimport('joomla.filesystem.folder');
+
+if(!class_exists('lessc')) {
+	T3::import('lessphp/lessc.inc');
+}
+T3::import('core/path');
 
 /**
  * T3Less class compile less
@@ -170,7 +174,11 @@ class T3Less extends lessc
 			if (!is_dir (dirname($tofile))) {
 				JFolder::create (dirname($tofile));
 			}
-			return JFile::write($tofile, $output);
+			
+			$ret = JFile::write($tofile, $output);
+			@chmod($tofile, 0644);
+
+			return $ret;
 		}
 
 		return $output;
@@ -251,7 +259,7 @@ class T3Less extends lessc
 		$doc = JFactory::getDocument();
 		if (defined ('T3_THEMER')) {
 			// in Themer mode, using js to parse less for faster
-			$doc->addHeadLink(JURI::base(true).'/'.T3Path::cleanPath($lesspath), 'stylesheet/less');
+			$doc->addStylesheet(JURI::base(true).'/'.T3Path::cleanPath($lesspath), 'text/less');
 			// Add lessjs to process lesscss
 			$doc->addScript (T3_URL.'/js/less-1.3.3.js');
 		} else {
@@ -268,15 +276,11 @@ class T3Less extends lessc
 							continue;
 						}
 						$url = $path.'/'.$url;
-						// $doc->addStyleSheet(JURI::current().'?t3action=lessc&s='.T3Path::cleanPath($url));
-						// 
 						$cssurl = $t3less->buildCss (T3Path::cleanPath($url));
 						$doc->addStyleSheet($cssurl);
 					}
 				}
 			} else {
-				// $doc->addStyleSheet(JURI::current().'?t3action=lessc&s='.T3Path::cleanPath($lesspath));
-				// 
 				$cssurl = $t3less->buildCss (T3Path::cleanPath($lesspath));
 				$doc->addStyleSheet($cssurl);
 			}	
@@ -285,7 +289,6 @@ class T3Less extends lessc
 			if ($theme && !preg_match ('#bootstrap#', $lesspath)) {
 				$themepath = str_replace ('/less/', '/less/themes/'.$theme.'/', $lesspath);
 				if (is_file (JPATH_ROOT . '/' . $themepath)) {
-					// $doc->addStyleSheet(JURI::current().'?t3action=lessc&s='.T3Path::cleanPath($themepath));
 					$cssurl = $t3less->buildCss (T3Path::cleanPath($themepath));
 					$doc->addStyleSheet($cssurl);
 				}

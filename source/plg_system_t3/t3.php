@@ -35,7 +35,12 @@ class plgSystemT3 extends JPlugin
 			T3Bot::beforeInit();
 			T3::init($template);
 			T3Bot::afterInit();
+			
+			//check and execute the t3action
 			T3::checkAction();
+			
+			//check and change template for ajax
+			T3::checkAjax();
 		}
 	}
 	
@@ -49,8 +54,13 @@ class plgSystemT3 extends JPlugin
 			} else {
 				$params = $japp->getTemplate(true)->params;
 				if(defined('T3_THEMER') && $params->get('themermode', 1)){
-					t3import('admin/theme');
+					T3::import('admin/theme');
 					T3AdminTheme::addAssets();
+				}
+
+				//check for ajax action and render t3ajax type to before head type
+				if(class_exists('T3Ajax')){
+					T3Ajax::render();
 				}
 			}
 		}
@@ -88,25 +98,23 @@ class plgSystemT3 extends JPlugin
 	 */
 	function onContentPrepareForm($form, $data)
 	{
-		// extra option for menu item
-		/*if ($form->getName() == 'com_menus.item') {
-			$this->loadLanguage();
-			JForm::addFormPath(T3_PATH . DIRECTORY_SEPARATOR . 'params');
-			$form->loadFile('megaitem', false);
-
-			$jversion = new JVersion;
-			if(!$jversion->isCompatible('3.0')){
-				$jdoc = JFactory::getDocument();
-				$jdoc->addScript(T3_ADMIN_URL . '/admin/js/jquery-1.8.0.min.js');
-				$jdoc->addScript(T3_ADMIN_URL . '/admin/js/jquery.noconflict.js');
-			}
-
-		} else 
-		*/
 		if(T3::detect() && $form->getName() == 'com_templates.style'){
 			$this->loadLanguage();
 			JForm::addFormPath(T3_PATH . DIRECTORY_SEPARATOR . 'params');
 			$form->loadFile('template', false);
+		}
+	
+		$tmpl = T3::detect() ? T3::detect() : (T3::getDefaultTemplate() ? T3::getDefaultTemplate() : false);
+	
+		if($tmpl){
+			$extended = JPATH_ROOT . '/templates/' . $tmpl . '/etc/form/' . $form->getName() . '.xml';
+			
+			if(is_file($extended)){
+				JFactory::getLanguage()->load('tpl_' . $tmpl, JPATH_SITE);
+				
+				JForm::addFormPath(dirname($extended));
+				$form->loadFile($form->getName(), false);
+			}
 		}
 	}
 	
